@@ -1,9 +1,9 @@
 # Wonderland-Chat
 一个虚假的，尝试与幻想乡建立通讯的虚拟聊天网页
 我没有把CSS和JS独立出来，因为是DeepSeek写的
-#在线使用
+# 在线使用
 https://slbcz.github.io/Wonderland-Chat/
-#离线使用
+# 离线使用
 你可以下载index.html，即可在本地离线使用
 # 使用注意
 这只是一个摸鱼时用DeepSeek写的生成的网页，未进行任何盈利行为，网页中出现的任何人名，团体名称等均与现实无关。
