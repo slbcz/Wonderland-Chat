@@ -2,1328 +2,1084 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>博丽神社/塞钱游戏</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- 引入站酷快乐体 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>博丽神社 · 纳奉游戏</title>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <style>
+        /* ===== 全局变量 ===== */
         :root {
-            --primary: #ff73d0;
-            --on-primary: #FFFFFF;
-            --primary-container: #FFF0F7;
-            --on-primary-container: #21005D;
-            --secondary: #8E6C88;
-            --on-secondary: #FFFFFF;
-            --secondary-container: #F7E8F3;
-            --on-secondary-container: #1D192B;
-            --tertiary: #7D5260;
-            --on-tertiary: #FFFFFF;
-            --tertiary-container: #FFD8E4;
-            --on-tertiary-container: #31111D;
-            --background: #FFFBFE;
-            --on-background: #1C1B1F;
+            --red: #FF3D3D;
+            --gold: #FFD700;
+            --pink: #ff73d0;
+            --bg-start: #ffddee;
+            --bg-end: #ddeeff;
             --surface: #FFFBFE;
-            --on-surface: #1C1B1F;
             --surface-variant: #F5E9F1;
+            --on-surface: #1C1B1F;
             --on-surface-variant: #49454F;
-            --outline: #79747E;
-            --shadow: #000000;
-            --animation-duration: 0.3s;
-            --shrine-red: #FF3D3D;
-            --shrine-gold: #FFD700;
-            --shrine-green: #4CAF50;
-            --shrine-blue: #2196F3;
-            /* 使用站酷快乐体作为主要字体 */
-            --zcool-font: 'ZCOOL KuaiLe', cursive;
+            --shadow: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 28px;
+            --font: 'ZCOOL KuaiLe', cursive;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: var(--zcool-font);
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font); }
 
         body {
-            background: linear-gradient(135deg, #ffccee, #ddeeff);
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             position: relative;
             overflow: hidden;
         }
 
-        /* 樱花飘落效果 */
+        /* ===== 樱花 ===== */
         .sakura {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C60,0 80,10 85,25 C100,35 90,55 75,60 C90,65 100,85 85,90 C80,100 60,90 50,75 C40,90 20,100 15,90 C0,85 10,65 25,60 C10,55 0,35 15,25 C20,10 40,0 50,15Z" fill="pink"/></svg>');
-            background-size: contain;
-            opacity: 0.7;
-            z-index: -1;
+            position: fixed;
             pointer-events: none;
+            z-index: -1;
+            width: 18px;
+            height: 18px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C60,0 80,10 85,25 C100,35 90,55 75,60 C90,65 100,85 85,90 C80,100 60,90 50,75 C40,90 20,100 15,90 C0,85 10,65 25,60 C10,55 0,35 15,25 C20,10 40,0 50,15Z" fill="%23ffb7c5"/></svg>');
+            background-size: contain;
+            opacity: 0.6;
+            animation: fall linear infinite;
+            will-change: transform;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0.7; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(1.2); opacity: 0; }
         }
 
+        /* ===== 主容器 ===== */
         .chat-container {
             width: 100%;
-            max-width: 500px;
-            height: 85vh;
+            max-width: 480px;
+            height: 90vh;
+            max-height: 780px;
             background: var(--surface);
-            border-radius: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            border: 2px solid var(--red);
             position: relative;
-            border: 2px solid var(--shrine-red);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="white" opacity="0.05"/><path d="M50,15 C60,0 80,10 85,25 C100,35 90,55 75,60 C90,65 100,85 85,90 C80,100 60,90 50,75 C40,90 20,100 15,90 C0,85 10,65 25,60 C10,55 0,35 15,25 C20,10 40,0 50,15Z" fill="pink" opacity="0.05"/></svg>');
-            background-size: 150px;
+            backdrop-filter: blur(2px);
         }
 
+        /* 神社横幅 */
         .shrine-banner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 30px;
-            background: linear-gradient(90deg, var(--shrine-red), #ff8a8a, var(--shrine-red));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 500;
-            font-size: 20px;
-            letter-spacing: 2px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            z-index: 11;
-            font-family: var(--zcool-font);
+            background: linear-gradient(90deg, var(--red), #ff7a7a, var(--red));
+            color: #fff;
+            text-align: center;
+            padding: 4px 0;
+            font-size: 18px;
+            letter-spacing: 4px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
+        /* 头部 */
         .chat-header {
-            background: linear-gradient(90deg, var(--shrine-red), #ff8a8a);
-            color: var(--on-primary);
-            padding: 20px 20px 20px 70px;
+            background: linear-gradient(90deg, var(--red), #ff7a7a);
+            color: #fff;
+            padding: 14px 16px 14px 72px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            margin-top: 30px;
+            gap: 12px;
             position: relative;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-
         .ai-avatar {
             position: absolute;
-            left: 15px;
-            top: -15px;
-            width: 60px;
-            height: 60px;
-            background: white;
+            left: 12px;
+            top: -10px;
+            width: 56px;
+            height: 56px;
+            background: #fff;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
-            color: var(--shrine-red);
-            border: 3px solid var(--shrine-gold);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 12;
+            font-size: 32px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: transform 0.3s;
         }
-
-        .ai-avatar:hover {
-            transform: rotate(15deg);
-        }
-
+        .ai-avatar:hover { transform: rotate(12deg) scale(1.05); }
         .header-text h2 {
+            font-size: 24px;
             font-weight: 700;
-            font-size: 26px;
-            letter-spacing: 1px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            font-family: var(--zcool-font);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
-
         .header-text p {
-            font-size: 16px;
+            font-size: 14px;
             opacity: 0.9;
-            margin-top: 5px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-family: var(--zcool-font);
+            gap: 6px;
         }
-
-        .status-indicator {
-            width: 10px;
-            height: 10px;
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
             background: #4CAF50;
             border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 5px #4CAF50;
+            box-shadow: 0 0 6px #4CAF50;
+            animation: blink 1.8s infinite;
         }
+        @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
 
+        /* ===== 消息区域 ===== */
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 16px 18px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            background: var(--background);
-            position: relative;
+            gap: 12px;
+            background: #fefafc;
+            scroll-behavior: smooth;
         }
-
         .message {
-            max-width: 80%;
-            padding: 15px;
+            max-width: 82%;
+            padding: 12px 16px;
             border-radius: 18px;
-            position: relative;
-            animation-duration: var(--animation-duration);
-            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation-fill-mode: both;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            font-family: var(--zcool-font);
+            animation: msgIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            word-break: break-word;
+            line-height: 1.5;
         }
-
         .ai-message {
             align-self: flex-start;
             background: var(--surface-variant);
-            color: var(--on-surface-variant);
+            color: var(--on-surface);
             border-bottom-left-radius: 4px;
-            animation-name: slideInLeft;
-            border-left: 3px solid var(--shrine-red);
-            font-size: 18px;
+            border-left: 3px solid var(--red);
         }
-
         .user-message {
             align-self: flex-end;
-            background: linear-gradient(135deg, var(--primary), #ff8a8a);
-            color: var(--on-primary);
+            background: linear-gradient(135deg, var(--pink), #ff8a8a);
+            color: #fff;
             border-bottom-right-radius: 4px;
-            animation-name: slideInRight;
-            border-right: 3px solid var(--shrine-gold);
-            font-size: 18px;
+            border-right: 3px solid var(--gold);
         }
-
         .special-message {
             background: #fff0f7;
-            border: 2px dashed var(--shrine-red);
+            border: 2px dashed var(--red);
             animation: pulse 2s infinite;
-            position: relative;
         }
-
         .special-message::after {
             content: "✨";
             position: absolute;
-            right: -15px;
-            top: -15px;
-            font-size: 24px;
-            animation: sparkle 1.5s infinite;
+            right: -12px;
+            top: -12px;
+            font-size: 22px;
         }
-
-        .message-content {
-            font-size: 18px;
-            line-height: 1.5;
-            font-family: var(--zcool-font);
-        }
-
         .message-time {
-            font-size: 14px;
-            opacity: 0.7;
+            font-size: 12px;
+            opacity: 0.6;
             text-align: right;
-            margin-top: 5px;
-            font-family: var(--zcool-font);
+            margin-top: 4px;
         }
-
-        .input-area {
-            padding: 15px;
-            background: var(--surface);
-            border-top: 1px solid var(--surface-variant);
-            display: flex;
-            gap: 10px;
-            position: relative;
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
-        .message-input {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 24px;
-            border: 2px solid var(--shrine-red);
-            background: var(--surface-variant);
-            color: var(--on-surface);
-            font-size: 18px;
-            outline: none;
-            transition: all 0.2s;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-            font-family: var(--zcool-font);
-        }
-
-        .message-input:focus {
-            box-shadow: 0 0 0 2px var(--shrine-gold), inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .send-button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--shrine-red), #ff8a8a);
-            color: var(--on-primary);
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 3px 8px rgba(255, 61, 61, 0.3);
-        }
-
-        .send-button:hover {
-            transform: scale(1.05);
-            background: linear-gradient(135deg, #ff2a2a, #ff6e6e);
-            box-shadow: 0 5px 12px rgba(255, 61, 61, 0.4);
-        }
-
-        .send-button:active {
-            transform: scale(0.95);
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,61,61,0.2); }
+            70% { box-shadow: 0 0 0 8px rgba(255,61,61,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,61,61,0); }
         }
 
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 5px;
-            padding: 10px 15px;
+            gap: 6px;
+            padding: 10px 16px;
             background: var(--surface-variant);
-            border-radius: 18px;
+            border-radius: 30px;
             align-self: flex-start;
-            margin-top: 5px;
             opacity: 0;
-            transition: opacity 0.3s;
-            border-left: 2px solid var(--shrine-red);
-            font-family: var(--zcool-font);
+            transition: opacity 0.25s;
+            border-left: 3px solid var(--red);
         }
-
-        .typing-indicator.visible {
-            opacity: 1;
-        }
-
+        .typing-indicator.visible { opacity: 1; }
         .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--shrine-red);
+            width: 8px; height: 8px;
+            background: var(--red);
             border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
+            animation: bounce 1.4s infinite ease-in-out;
         }
-
-        .dot:nth-child(1) { animation-delay: 0s; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        .suggestion-box {
-            display: flex;
-            gap: 10px;
-            padding: 10px 20px;
-            background: var(--secondary-container);
-            overflow-x: auto;
-            border-bottom: 1px solid var(--surface-variant);
+        @keyframes bounce {
+            0%,60%,100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
         }
 
-        .suggestion {
-            padding: 8px 15px;
-            background: white;
-            border-radius: 20px;
-            font-size: 16px;
-            white-space: nowrap;
-            cursor: pointer;
-            border: 1px solid var(--shrine-red);
-            color: var(--shrine-red);
-            transition: all 0.2s;
-            font-family: var(--zcool-font);
-        }
-
-        .suggestion:hover {
-            background: var(--shrine-red);
-            color: white;
-        }
-
-        .shrine-footer {
-            padding: 10px;
-            text-align: center;
-            font-size: 16px;
-            color: var(--shrine-red);
-            border-top: 1px solid #eee;
-            font-family: var(--zcool-font);
+        /* ===== 纳奉按钮（独立行动栏） ===== */
+        .action-bar {
+            padding: 10px 16px 6px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 10px;
-            background: var(--surface-variant);
+            flex-shrink: 0;
+            background: #fff;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
         }
-
-        .coin-icon {
-            width: 24px;
-            height: 24px;
-            background: var(--shrine-gold);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            color: #8B4513;
+        .offer-btn {
+            background: linear-gradient(135deg, var(--red), #ff6a6a);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 32px;
+            font-size: 20px;
             font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255,61,61,0.35);
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+        .offer-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 28px rgba(255,61,61,0.45);
+        }
+        .offer-btn:active {
+            transform: scale(0.96);
+        }
+        .offer-btn .icon {
+            font-size: 28px;
         }
 
-        /* 塞钱小游戏样式 */
-        .game-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+        /* ===== 输入区 ===== */
+        .input-area {
+            padding: 10px 16px 12px;
+            background: #fff;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .message-input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 30px;
+            border: 2px solid var(--red);
+            background: var(--surface-variant);
+            font-size: 17px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .message-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.3);
+        }
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--red), #ff6a6a);
+            color: #fff;
+            border: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            font-size: 26px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(255,61,61,0.3);
+            flex-shrink: 0;
+        }
+        .send-button:hover { transform: scale(1.06); }
+        .send-button:active { transform: scale(0.94); }
+
+        /* 底部香火钱 */
+        .shrine-footer {
+            padding: 8px 16px;
+            background: var(--surface-variant);
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px;
+            color: var(--red);
+            flex-shrink: 0;
+        }
+        .coin-badge {
+            background: var(--gold);
+            color: #8B4513;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+        }
+
+        /* ===== 纳奉游戏弹窗 ===== */
+        .game-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s;
+            transition: opacity 0.35s ease;
         }
-
-        .game-container.active {
+        .game-overlay.active {
             opacity: 1;
             pointer-events: all;
         }
-
         .game-box {
-            background: white;
-            border-radius: 24px;
-            padding: 30px;
+            background: #fff8fa;
+            border-radius: 32px;
+            padding: 24px 20px 20px;
             max-width: 400px;
-            width: 90%;
-            text-align: center;
+            width: 92%;
+            border: 3px solid var(--red);
+            box-shadow: 0 30px 60px rgba(255,61,61,0.25);
+            transform: scale(0.92);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
-            border: 3px solid var(--shrine-red);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+        .game-overlay.active .game-box { transform: scale(1); }
+        .game-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--red);
+            color: #fff;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-close:hover { transform: rotate(90deg); }
 
         .game-title {
-            color: var(--shrine-red);
-            font-size: 28px;
-            margin-bottom: 15px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 26px;
+            color: var(--red);
+            text-align: center;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
-
-        .game-description {
-            color: var(--on-surface);
-            font-size: 18px;
-            margin-bottom: 20px;
+        .game-desc {
+            text-align: center;
+            font-size: 15px;
+            color: var(--on-surface-variant);
+            margin-bottom: 16px;
         }
 
         .time-selector {
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
-
-        .time-option {
-            padding: 8px 15px;
-            background: var(--surface-variant);
-            border-radius: 20px;
+        .time-opt {
+            padding: 4px 16px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.7);
+            border: 2px solid transparent;
             font-size: 16px;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
+            transition: 0.2s;
+            font-weight: bold;
+            color: var(--on-surface);
         }
-
-        .time-option.selected {
-            background: var(--shrine-red);
-            color: white;
-            border-color: var(--shrine-gold);
+        .time-opt.selected {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--gold);
             transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(255,61,61,0.3);
+        }
+        .time-opt:hover:not(.selected) { border-color: var(--red); }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--red), var(--gold));
+            border-radius: 6px;
+            transition: width 0.3s linear;
         }
 
         .game-stats {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            background: var(--surface-variant);
-            padding: 15px;
-            border-radius: 16px;
-            font-size: 18px;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(4px);
+            padding: 12px;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.8);
         }
-
-        .stat-box {
+        .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
-        .stat-value {
-            font-size: 24px;
+        .stat-label { font-size: 14px; color: var(--on-surface-variant); }
+        .stat-number {
+            font-size: 28px;
             font-weight: bold;
-            color: var(--shrine-red);
-            margin-top: 5px;
+            line-height: 1.2;
+        }
+        .stat-number.time { color: #E65100; }
+        .stat-number.money { color: var(--gold); text-shadow: 0 2px 8px rgba(255,215,0,0.3); }
+
+        .combo-display {
+            text-align: center;
+            font-size: 18px;
+            color: var(--red);
+            min-height: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+        .combo-display.pop {
+            animation: pop 0.25s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #FF6F00; }
+            100% { transform: scale(1); }
         }
 
-        .game-target {
+        /* 赛钱箱 - 纯CSS 3D */
+        .box-wrapper {
             width: 150px;
-            height: 200px;
-            margin: 0 auto 25px;
+            height: 190px;
+            margin: 0 auto 16px;
             position: relative;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"><rect x="20" y="20" width="110" height="160" rx="15" fill="%23f5e9f1" stroke="%23FF3D3D" stroke-width="3"/><rect x="45" y="0" width="60" height="20" rx="8" fill="%23FF3D3D"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.12s;
+            perspective: 600px;
         }
-
-        .game-target:active {
-            transform: scale(0.95);
+        .box-wrapper:active { transform: scale(0.94); }
+        .box-3d {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #8B5A2B, #A67B5B 50%, #D2B48C);
+            border-radius: 14px 14px 8px 8px;
+            box-shadow: inset 0 -8px 0 #5D3A1A, inset 0 8px 0 #C9A87C, 0 12px 28px rgba(0,0,0,0.25);
+            border: 4px solid #5D3A1A;
+            transform: rotateX(2deg);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 16px;
         }
-
-        .coin-effect {
+        .box-3d::before {
+            content: "";
             position: absolute;
-            color: var(--shrine-gold);
-            font-weight: bold;
-            font-size: 20px;
+            inset: 16px 12px;
+            border: 2px solid rgba(93,58,26,0.2);
+            border-radius: 8px;
+            background: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(93,58,26,0.06) 6px, rgba(93,58,26,0.06) 7px);
+            pointer-events: none;
+        }
+        .slot-hole {
+            position: absolute;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 10px;
+            background: #3E2723;
+            border-radius: 6px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 0 0 2px #5D3A1A;
+            z-index: 2;
+        }
+        .gold-border {
+            position: absolute;
+            inset: 6px;
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .box-emoji {
+            font-size: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 2;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .box-wrapper.shake {
+            animation: shake 0.15s ease;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(-5px) rotate(-2deg); }
+            75% { transform: translateX(5px) rotate(2deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+
+        /* 金币粒子 */
+        .coin-particle {
+            position: absolute;
+            font-size: 22px;
             pointer-events: none;
             z-index: 10;
-            animation: floatUp 1s forwards;
-            text-shadow: 0 0 3px rgba(0,0,0,0.8);
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 0 0 8px rgba(255,215,0,0.6);
+            animation: fly 0.9s ease-out forwards;
+        }
+        @keyframes fly {
+            0% { opacity: 1; transform: translate(0,0) scale(1) rotate(0); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(720deg); }
         }
 
-        .game-buttons {
+        .game-actions {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
+            margin-top: 4px;
         }
-
-        .game-button {
-            background: linear-gradient(135deg, var(--shrine-red), #ff8a8a);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 12px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.2s;
-            font-family: var(--zcool-font);
-            box-shadow: 0 4px 8px rgba(255, 61, 61, 0.3);
+        .game-btn {
             flex: 1;
-            max-width: 180px;
+            max-width: 150px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
         }
-
-        .game-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(255, 61, 61, 0.4);
+        .game-btn.primary {
+            background: linear-gradient(135deg, var(--red), #ff6a6a);
         }
-
-        .game-button:active {
-            transform: translateY(1px);
+        .game-btn.primary:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(255,61,61,0.35); }
+        .game-btn.secondary {
+            background: linear-gradient(135deg, #7a7a7a, #aaa);
         }
-
-        .cancel-button {
-            background: linear-gradient(135deg, #6b6b6b, #9e9e9e);
-        }
-
-        .cancel-button:hover {
-            background: linear-gradient(135deg, #5a5a5a, #7d7d7d);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
+        .game-btn.secondary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .game-btn:active { transform: translateY(0); }
 
         .game-results {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: var(--surface-variant);
-            border-radius: 16px;
-            font-size: 18px;
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(255,215,0,0.10);
+            border-radius: 20px;
+            border: 2px solid var(--gold);
+            text-align: center;
+            animation: fadeUp 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-
-        .result-title {
-            font-size: 22px;
-            color: var(--shrine-red);
-            margin-bottom: 10px;
-        }
-
-        .result-amount {
-            font-size: 32px;
-            color: var(--shrine-green);
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .close-button {
+        .game-results::before {
+            content: "🏆";
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--shrine-red);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.2s;
+            font-size: 56px;
+            right: 8px;
+            bottom: 4px;
+            opacity: 0.15;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-amount {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 0 2px 12px rgba(255,215,0,0.25);
+            margin: 4px 0;
         }
 
-        .close-button:hover {
-            transform: rotate(90deg);
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .chat-container { height: 92vh; max-height: none; border-radius: 20px; }
+            .ai-avatar { width: 48px; height: 48px; font-size: 26px; left: 10px; }
+            .chat-header { padding-left: 64px; }
+            .header-text h2 { font-size: 20px; }
+            .message { max-width: 88%; padding: 10px 14px; font-size: 15px; }
+            .game-box { padding: 18px 14px; }
+            .box-wrapper { width: 130px; height: 170px; }
+            .stat-number { font-size: 24px; }
+            .game-btn { font-size: 17px; padding: 8px 0; max-width: 130px; }
+            .offer-btn { font-size: 18px; padding: 10px 24px; }
         }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-5px); }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-20px) rotate(-2deg);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) rotate(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px) rotate(2deg);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) rotate(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 61, 61, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 61, 61, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 61, 61, 0); }
-        }
-        
-        @keyframes sparkle {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-        
-        @keyframes coinGlow {
-            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
-        }
-        
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .chat-container {
-                height: 95vh;
-                border-radius: 24px;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
-            
-            .ai-avatar {
-                width: 50px;
-                height: 50px;
-                font-size: 30px;
-            }
-            
-            .header-text h2 {
-                font-size: 22px;
-            }
-            
-            .message-content {
-                font-size: 16px;
-            }
-            
-            .game-box {
-                padding: 20px;
-            }
-            
-            .game-title {
-                font-size: 24px;
-            }
-            
-            .game-target {
-                width: 120px;
-                height: 160px;
-            }
-            
-            .time-option {
-                padding: 6px 12px;
-                font-size: 14px;
-            }
-            
-            .game-button {
-                padding: 10px 20px;
-                font-size: 18px;
-            }
+        @media (max-width: 380px) {
+            .box-wrapper { width: 110px; height: 150px; }
+            .game-title { font-size: 22px; }
+            .time-opt { font-size: 14px; padding: 2px 12px; }
         }
     </style>
 </head>
 <body>
-    <!-- 樱花飘落效果 -->
-    <div id="sakura-container"></div>
-    
-    <!-- 塞钱小游戏弹窗 -->
-    <div class="game-container" id="game-container">
+    <!-- 樱花由JS动态生成 -->
+
+    <!-- 纳奉游戏弹窗 -->
+    <div class="game-overlay" id="gameOverlay">
         <div class="game-box">
-            <button class="close-button" id="close-game">
-                <span class="material-icons">close</span>
-            </button>
-            <h2 class="game-title">塞钱给灵梦</h2>
-            <p class="game-description">点击赛钱箱塞钱！每次点击塞10日元</p>
-            
-            <!-- 时间选择器 -->
+            <button class="game-close" id="gameClose">✕</button>
+            <div class="game-title"><span>⛩️</span> 纳奉给灵梦</div>
+            <p class="game-desc">点击赛钱箱，每次纳奉 10 日元！</p>
+
             <div class="time-selector">
-                <div class="time-option" data-time="10">10秒</div>
-                <div class="time-option selected" data-time="30">30秒</div>
-                <div class="time-option" data-time="60">60秒</div>
+                <span class="time-opt" data-time="10">10秒</span>
+                <span class="time-opt selected" data-time="30">30秒</span>
+                <span class="time-opt" data-time="60">60秒</span>
             </div>
-            
+
+            <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
+
             <div class="game-stats">
-                <div class="stat-box">
-                    <div>剩余时间</div>
-                    <div class="stat-value" id="time-left">30</div>
+                <div class="stat-item">
+                    <span class="stat-label">⏱️ 剩余</span>
+                    <span class="stat-number time" id="timeLeft">30</span>
                 </div>
-                <div class="stat-box">
-                    <div>已塞金额</div>
-                    <div class="stat-value" id="money-earned">0</div>
+                <div class="stat-item">
+                    <span class="stat-label">💰 已纳奉</span>
+                    <span class="stat-number money" id="moneyEarned">0</span>
                 </div>
             </div>
-            
-            <div class="game-target" id="game-target">
-                <!-- 点击效果会动态添加到这里 -->
+
+            <div class="combo-display" id="comboDisplay">✨ 连击 0</div>
+
+            <div class="box-wrapper" id="boxWrapper">
+                <div class="box-3d">
+                    <div class="slot-hole"></div>
+                    <div class="gold-border"></div>
+                    <span class="box-emoji">⛩️</span>
+                </div>
             </div>
-            
-            <div class="game-buttons">
-                <button class="game-button cancel-button" id="cancel-game">结束游戏</button>
-                <button class="game-button" id="start-game">开始塞钱</button>
+
+            <div class="game-actions">
+                <button class="game-btn secondary" id="gameCancel">结束</button>
+                <button class="game-btn primary" id="gameStart">开始纳奉</button>
             </div>
-            
-            <div class="game-results" id="game-results">
-                <div class="result-title">塞钱结束！</div>
-                <p>你在<span id="result-time">30</span>秒内塞了</p>
-                <div class="result-amount" id="final-amount">0 日元</div>
-                <p>感谢对博丽神社的支持！</p>
+
+            <div class="game-results" id="gameResults">
+                <div style="font-size:22px; color:var(--red);">🎉 纳奉结束！</div>
+                <p style="font-size:15px; color:var(--on-surface-variant);">你在 <span id="resultTime">30</span> 秒内纳奉了</p>
+                <div class="result-amount" id="finalAmount">0 日元</div>
+                <p style="font-size:15px; color:var(--on-surface-variant);">感谢对博丽神社的支持！</p>
             </div>
         </div>
     </div>
-    
+
+    <!-- 主聊天界面 -->
     <div class="chat-container">
-        <div class="shrine-banner">博丽神社 · 幻想乡通讯</div>
-        
+        <div class="shrine-banner">⛩️ 博丽神社 · 纳奉游戏</div>
+
         <div class="chat-header">
-            <div class="ai-avatar">
-                <span class="material-icons">self_improvement</span>
-            </div>
+            <div class="ai-avatar">🌸</div>
             <div class="header-text">
                 <h2>博丽灵梦</h2>
-                <p><span class="status-indicator"></span> 在线 - 喝茶中</p>
+                <p><span class="status-dot"></span> 在线 · 喝茶中</p>
             </div>
         </div>
-        
-        <div class="suggestion-box">
-            <div class="suggestion" data-text="那，明天呢？">明天呢？</div>
-            <div class="suggestion" data-text="今天天气怎么样？">今天天气</div>
-            <div class="suggestion" id="play-game-btn">塞钱给灵梦</div>
-            <div class="suggestion" data-text="有异变发生吗？">异变</div>
-            <div class="suggestion" data-text="魔理沙在吗？">魔理沙</div>
-            <div class="suggestion" data-text="神社有什么活动？">神社活动</div>
-            <div class="suggestion" data-text="你能帮我什么？">帮助</div>
-            <div class="suggestion" data-text="幻想乡是什么地方？">幻想乡</div>
-        </div>
-        
-        <div class="chat-messages" id="chat-messages">
-            <!-- 初始消息由JS添加 -->
-            <div class="typing-indicator" id="typing-indicator">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+
+        <!-- 无预设建议栏，已被删除 -->
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="typing-indicator" id="typingIndicator">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
             </div>
         </div>
-        
-        <div class="input-area">
-            <input type="text" class="message-input" id="message-input" placeholder="向博丽巫女发送消息..." autocomplete="off">
-            <button class="send-button" id="send-button">
-                <span class="material-icons">send</span>
+
+        <!-- 独立纳奉按钮 -->
+        <div class="action-bar">
+            <button class="offer-btn" id="playGameBtn">
+                <span class="icon">⛩️</span> 纳奉给灵梦
             </button>
         </div>
-        
+
+        <div class="input-area">
+            <input type="text" class="message-input" id="msgInput" placeholder="向巫女发送消息…" autocomplete="off">
+            <button class="send-button" id="sendBtn">➤</button>
+        </div>
+
         <div class="shrine-footer">
-            <span>今日香火钱:</span>
-            <div class="coin-icon">¥</div>
-            <span id="total-money">0</span>
+            <span>今日香火钱</span>
+            <span class="coin-badge">¥</span>
+            <span id="totalMoney">0</span>
             <span>日元</span>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-button');
-            const typingIndicator = document.getElementById('typing-indicator');
-            const suggestions = document.querySelectorAll('.suggestion');
-            const sakuraContainer = document.getElementById('sakura-container');
-            const playGameBtn = document.getElementById('play-game-btn');
-            const gameContainer = document.getElementById('game-container');
-            const closeGameBtn = document.getElementById('close-game');
-            const startGameBtn = document.getElementById('start-game');
-            const cancelGameBtn = document.getElementById('cancel-game');
-            const timeLeftDisplay = document.getElementById('time-left');
-            const moneyEarnedDisplay = document.getElementById('money-earned');
-            const finalAmountDisplay = document.getElementById('final-amount');
-            const resultTimeDisplay = document.getElementById('result-time');
-            const gameTarget = document.getElementById('game-target');
-            const gameResults = document.getElementById('game-results');
-            const totalMoneyDisplay = document.getElementById('total-money');
-            const timeOptions = document.querySelectorAll('.time-option');
-            
-            // 游戏状态变量
+        (function() {
+            "use strict";
+
+            // ===== DOM 引用 =====
+            const chatMessages = document.getElementById('chatMessages');
+            const msgInput = document.getElementById('msgInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const playGameBtn = document.getElementById('playGameBtn');
+            const gameOverlay = document.getElementById('gameOverlay');
+            const gameClose = document.getElementById('gameClose');
+            const gameStart = document.getElementById('gameStart');
+            const gameCancel = document.getElementById('gameCancel');
+            const timeLeftDisplay = document.getElementById('timeLeft');
+            const moneyEarnedDisplay = document.getElementById('moneyEarned');
+            const finalAmountDisplay = document.getElementById('finalAmount');
+            const resultTimeDisplay = document.getElementById('resultTime');
+            const boxWrapper = document.getElementById('boxWrapper');
+            const gameResults = document.getElementById('gameResults');
+            const totalMoneyDisplay = document.getElementById('totalMoney');
+            const timeOptions = document.querySelectorAll('.time-opt');
+            const progressFill = document.getElementById('progressFill');
+            const comboDisplay = document.getElementById('comboDisplay');
+
+            // ===== DeepSeek API =====
+            const API_KEY = 'sk-bf766aaa6334454ea9780f6f61749a83';
+            const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
+            // ===== 备用回复 =====
+            const fallbacks = [
+                '嗯？你说什么？', '幻想乡的日常真是和平啊～', '要喝杯茶吗？',
+                '我正在打扫神社呢', '最近香火钱又变少了…', '灵符「梦想封印」！',
+                '妖怪退治可是很忙的', '今天神社不营业哦', '需要退治妖怪服务吗？',
+                '这个问题有点难呢…', '换个话题吧'
+            ];
+
+            // ===== 游戏状态 =====
             let gameActive = false;
             let timeLeft = 30;
             let totalTime = 30;
             let moneyEarned = 0;
-            let totalMoney = 0;
-            let gameTimer;
-            let lastCoinTime = 0;
-            let coinCount = 0;
-            
-            // 预设问题与回答，包含模糊词
-            const questionResponses = [
-                {
-                    keywords: ['明天', '明日', '以后', '未来', '接下来', '之后'],
-                    responses: [
-                        '神社闭店之日',
-                        '明天的事情明天再说吧～',
-                        '明天也许会下雨，记得带伞哦',
-                        '明天神社有特别活动，记得来参拜！'
-                    ]
-                },
-                {
-                    keywords: ['天气', '气候', '气温', '下雨', '晴天', '阴天'],
-                    responses: [
-                        '博丽神社的天气永远晴朗！',
-                        '今天也是适合退治妖怪的好天气呢',
-                        '天气？我正喝茶呢，别问我天气的事情',
-                        '幻想乡的天气由八云紫大人决定',
-                        '天气不错，适合打扫神社'
-                    ]
-                },
-                {
-                    keywords: ['塞钱', '捐款', '香火', '香火钱', '资助', '赞助', '捐赠', '投钱'],
-                    responses: [
-                        '感谢您的香火钱！神社运营就靠大家了！',
-                        '您真是大方！愿神明保佑您！',
-                        '香火钱越多，神社越灵验哦！',
-                        '感谢您的支持！我会好好使用这些钱的'
-                    ]
-                },
-                {
-                    keywords: ['魔理沙', '黑白', '魔法使', '小偷', 'da☆ze'],
-                    responses: [
-                        '那个黑白魔法使又偷走神社的东西了！DA☆ZE',
-                        '魔理沙？她总是在森林里做奇怪的实验',
-                        '那个小偷！上次偷走了我的茶具！',
-                        '魔理沙是我的朋友，虽然她总是不请自来'
-                    ]
-                },
-                {
-                    keywords: ['异变', '事件', '问题', '麻烦', '异常', '奇怪'],
-                    responses: [
-                        '异变？我这就去调查！',
-                        '最近的异变越来越多了',
-                        '异变是幻想乡的日常',
-                        '有异变发生？看来又有工作要做了'
-                    ]
-                },
-                {
-                    keywords: ['喝茶', '茶', '茶叶', '品茶', '茶道', '红茶', '绿茶'],
-                    responses: [
-                        '要来一杯茶吗？神社特供的灵梦茶哦～',
-                        '我正在喝茶，你要来一杯吗？',
-                        '茶是巫女最好的朋友',
-                        '喝茶能让人心情平静'
-                    ]
-                },
-                {
-                    keywords: ['符卡', '封印', '灵符', '梦想封印', '符咒', '符纸'],
-                    responses: [
-                        '灵符「梦想封印」！',
-                        '符卡是幻想乡的战斗规则',
-                        '我的符卡可是很厉害的！',
-                        '要看看我的符卡吗？'
-                    ]
-                },
-                {
-                    keywords: ['神社', '活动', '庆典', '祭典', '节日', '参拜'],
-                    responses: [
-                        '神社经常举办各种活动，欢迎参加！',
-                        '最近有春季大祭，记得来参拜哦',
-                        '神社活动是收集香火钱的好机会',
-                        '欢迎来神社参拜，会有好运的！'
-                    ]
-                },
-                {
-                    keywords: ['帮助', '帮忙', '协助', '支援', '能做什么', '干什么'],
-                    responses: [
-                        '我能帮你退治妖怪，或者解答关于幻想乡的问题',
-                        '需要退治妖怪服务吗？',
-                        '我可以为你介绍幻想乡的各种事情',
-                        '有什么问题尽管问我吧！'
-                    ]
-                },
-                {
-                    keywords: ['幻想乡', '地方', '位置', '在哪', '何处', '地点'],
-                    responses: [
-                        '幻想乡是与外界隔绝的神秘之地',
-                        '幻想乡有很多有趣的居民和地点',
-                        '要找到幻想乡可不容易哦',
-                        '幻想乡是个美丽而神秘的地方'
-                    ]
-                },
-                {
-                    keywords: ['八云紫', '紫', '紫大人', '间隙', '老太婆'],
-                    responses: [
-                        '那个间隙妖怪？她总是神出鬼没',
-                        '八云紫是幻想乡的贤者，但我总觉得她很麻烦',
-                        '不要随便提那个老太婆',
-                        '八云紫大人是维持结界的重要人物'
-                    ]
-                },
-                {
-                    keywords: ['雾雨魔理沙', '魔法使', '黑白魔法使', '盗贼'],
-                    responses: [
-                        '魔理沙是个有趣的家伙，虽然她总偷我东西',
-                        'DA☆ZE！那是魔理沙的口头禅',
-                        '魔理沙住在魔法森林里',
-                        '那个黑白！昨天又偷走了我的点心！'
-                    ]
-                },
-                {
-                    keywords: ['退治', '妖怪', '怪物', '驱魔', '消灭', '战斗'],
-                    responses: [
-                        '退治妖怪是巫女的工作',
-                        '最近妖怪越来越不安分了',
-                        '需要退治妖怪服务吗？',
-                        '我可是专业的妖怪退治专家！'
-                    ]
-                },
-                {
-                    keywords: ['飞行', '飞', '空中', '腾空', '翱翔'],
-                    responses: [
-                        '飞行是基本技能',
-                        '在幻想乡，飞行是很常见的',
-                        '要和我一起飞吗？',
-                        '飞行是巫女必备的能力'
-                    ]
-                },
-                {
-                    keywords: ['结界', '大结界', '博丽大结界', '边界', '屏障'],
-                    responses: [
-                        '博丽大结界保护着幻想乡',
-                        '结界由我和八云紫共同维护',
-                        '结界是幻想乡存在的根本',
-                        '没有结界，幻想乡就会暴露在外界'
-                    ]
-                }
-            ];
-            
-            // 创建樱花飘落效果
-            function createSakura() {
-                const sakura = document.createElement('div');
-                sakura.classList.add('sakura');
-                
-                // 随机位置
-                const startX = Math.random() * window.innerWidth;
-                sakura.style.left = `${startX}px`;
-                sakura.style.top = '-20px';
-                
-                // 随机大小
-                const size = Math.random() * 15 + 10;
-                sakura.style.width = `${size}px`;
-                sakura.style.height = `${size}px`;
-                
-                // 随机动画
-                const duration = Math.random() * 10 + 10;
-                const delay = Math.random() * 5;
-                sakura.style.animation = `float ${duration}s linear ${delay}s infinite`;
-                
-                sakuraContainer.appendChild(sakura);
-                
-                // 移除樱花元素
-                setTimeout(() => {
-                    sakura.remove();
-                }, (duration + delay) * 1000);
+            let totalMoney = 0;   // 全局累计纳奉金额，AI 会用到
+            let timerId = null;
+            let lastClickTime = 0;
+            let comboCount = 0;
+            let maxCombo = 0;
+
+            // ===== 工具函数 =====
+            function getTimeStr() {
+                const d = new Date();
+                return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
             }
-            
-            // 每0.5秒创建一个樱花
-            setInterval(createSakura, 500);
-            
-            // 初始AI消息
-            setTimeout(() => {
-                addMessage('ai', '今天也是好天气！', true);
-            }, 1000);
-            
-            // 发送消息函数
-            function sendMessage() {
-                const message = messageInput.value.trim();
-                if (message) {
-                    addMessage('user', message);
-                    messageInput.value = '';
-                    
-                    // 检查是否是特定问题
-                    if (message === '那，明天呢？' || message === '明天呢？') {
-                        showTypingIndicator();
-                        setTimeout(() => {
-                            hideTypingIndicator();
-                            addMessage('ai', '神社闭店之日', true);
-                        }, 1000);
-                    } else {
-                        // 使用模糊匹配查找回答
-                        const response = findResponse(message);
-                        showTypingIndicator();
-                        setTimeout(() => {
-                            hideTypingIndicator();
-                            addMessage('ai', response);
-                        }, 800);
-                    }
-                }
-            }
-            
-            // 模糊匹配函数
-            function findResponse(message) {
-                // 将消息转换为小写以便匹配
-                const lowerMessage = message.toLowerCase();
-                
-                // 遍历所有问题响应
-                for (const qr of questionResponses) {
-                    // 检查消息中是否包含任何关键词
-                    for (const keyword of qr.keywords) {
-                        if (lowerMessage.includes(keyword.toLowerCase())) {
-                            // 随机选择一个回答
-                            const randomIndex = Math.floor(Math.random() * qr.responses.length);
-                            return qr.responses[randomIndex];
-                        }
-                    }
-                }
-                
-                // 如果没有匹配到任何关键词，返回默认回答
-                const defaultResponses = [
-                    '嗯？你在说什么？',
-                    '幻想乡的日常真是和平啊～',
-                    '要喝杯茶吗？',
-                    '我正在打扫神社，没空聊天',
-                    '最近神社的香火钱又变少了...',
-                    '灵符「梦想封印」！',
-                    '妖怪退治可是很忙的',
-                    '神社今天不营业哦～',
-                    '需要退治妖怪服务吗？',
-                    '这个问题有点难回答呢...',
-                    '你是在问我吗？我不太明白',
-                    '换个话题怎么样？'
-                ];
-                
-                const randomIndex = Math.floor(Math.random() * defaultResponses.length);
-                return defaultResponses[randomIndex];
-            }
-            
-            // 添加消息到聊天窗口
+
             function addMessage(sender, text, special = false) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', sender + '-message');
-                if (special) {
-                    messageDiv.classList.add('special-message');
+                const div = document.createElement('div');
+                div.className = `message ${sender}-message` + (special ? ' special-message' : '');
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.textContent = text;
+                const time = document.createElement('div');
+                time.className = 'message-time';
+                time.textContent = getTimeStr();
+                div.appendChild(content);
+                div.appendChild(time);
+                chatMessages.insertBefore(div, typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTyping() { typingIndicator.classList.add('visible'); chatMessages.scrollTop = chatMessages.scrollHeight; }
+            function hideTyping() { typingIndicator.classList.remove('visible'); }
+
+            // ===== 调用 AI（带当前总纳奉金额上下文） =====
+            async function getAIResponse(userMsg) {
+                try {
+                    // 构建系统提示，动态注入当前总纳奉金额
+                    const systemPrompt = `你叫博丽灵梦，是博丽神社的巫女，生活在幻想乡。你性格慵懒、爱喝茶，但遇到异变时会认真起来。说话语气活泼可爱，经常提到神社、纳奉、妖怪退治等话题。回复要简短自然，像日常聊天一样。目前神社总纳奉金额为 ${totalMoney} 日元。`;
+
+                    const resp = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
+                        },
+                        body: JSON.stringify({
+                            model: 'deepseek-chat',
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                { role: 'user', content: userMsg }
+                            ],
+                            max_tokens: 150,
+                            temperature: 0.8
+                        })
+                    });
+                    if (!resp.ok) {
+                        console.warn('API 错误:', await resp.text());
+                        return null;
+                    }
+                    const data = await resp.json();
+                    let reply = data.choices?.[0]?.message?.content?.trim() || null;
+                    // 统一替换AI回复中的“塞钱”为“纳奉”
+                    if (reply) {
+                        reply = reply.replace(/塞钱/g, '纳奉');
+                    }
+                    return reply;
+                } catch (e) {
+                    console.warn('API 异常:', e);
+                    return null;
                 }
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.classList.add('message-content');
-                contentDiv.textContent = text;
-                
-                const timeDiv = document.createElement('div');
-                timeDiv.classList.add('message-time');
-                
-                const now = new Date();
-                timeDiv.textContent = now.getHours().toString().padStart(2, '0') + ':' + 
-                                       now.getMinutes().toString().padStart(2, '0');
-                
-                messageDiv.appendChild(contentDiv);
-                messageDiv.appendChild(timeDiv);
-                
-                // 在打字指示器前添加消息
-                chatMessages.insertBefore(messageDiv, typingIndicator);
-                
-                // 滚动到底部
-                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
-            
-            // 显示打字指示器
-            function showTypingIndicator() {
-                typingIndicator.classList.add('visible');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // ===== 发送消息流程 =====
+            async function handleSend() {
+                const msg = msgInput.value.trim();
+                if (!msg) return;
+                addMessage('user', msg);
+                msgInput.value = '';
+
+                showTyping();
+                const reply = await getAIResponse(msg);
+                hideTyping();
+
+                if (reply) {
+                    addMessage('ai', reply);
+                } else {
+                    const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+                    addMessage('ai', fallback);
+                }
             }
-            
-            // 隐藏打字指示器
-            function hideTypingIndicator() {
-                typingIndicator.classList.remove('visible');
-            }
-            
-            // 塞钱小游戏函数
-            function showGame() {
-                gameContainer.classList.add('active');
-            }
-            
-            function hideGame() {
-                gameContainer.classList.remove('active');
-                resetGame();
-            }
-            
+
+            // ===== 游戏逻辑 =====
             function resetGame() {
                 gameActive = false;
+                clearInterval(timerId);
+                timerId = null;
                 timeLeft = totalTime;
                 moneyEarned = 0;
-                coinCount = 0;
+                comboCount = 0;
+                maxCombo = 0;
                 timeLeftDisplay.textContent = timeLeft;
                 moneyEarnedDisplay.textContent = moneyEarned;
-                gameTarget.innerHTML = '';
+                progressFill.style.width = '100%';
+                comboDisplay.textContent = '✨ 连击 0';
+                comboDisplay.classList.remove('pop');
+                boxWrapper.classList.remove('shake');
                 gameResults.style.display = 'none';
-                startGameBtn.style.display = 'block';
-                cancelGameBtn.textContent = "结束游戏";
-                clearInterval(gameTimer);
-                
-                // 移除事件监听器
-                gameTarget.removeEventListener('click', addCoin);
+                gameStart.style.display = 'block';
+                gameCancel.textContent = '结束';
+                document.querySelectorAll('.coin-particle').forEach(el => el.remove());
+                boxWrapper.style.pointerEvents = 'none';
             }
-            
+
             function startGame() {
+                resetGame();
                 gameActive = true;
-                startGameBtn.style.display = 'none';
+                gameStart.style.display = 'none';
                 gameResults.style.display = 'none';
-                cancelGameBtn.textContent = "结束游戏";
-                
-                // 添加点击事件
-                gameTarget.addEventListener('click', addCoin);
-                
-                // 开始计时
-                gameTimer = setInterval(() => {
+                gameCancel.textContent = '结束';
+                boxWrapper.style.pointerEvents = 'auto';
+
+                timerId = setInterval(() => {
                     timeLeft--;
                     timeLeftDisplay.textContent = timeLeft;
-                    
+                    const percent = (timeLeft / totalTime) * 100;
+                    progressFill.style.width = percent + '%';
                     if (timeLeft <= 0) {
                         endGame();
                     }
                 }, 1000);
             }
-            
-            function addCoin(event) {
-                if (!gameActive) return;
-                
-                const now = Date.now();
-                const timeDiff = now - lastCoinTime;
-                lastCoinTime = now;
-                
-                // 检测点击速度
-                if (timeDiff < 50) { // 小于50毫秒视为异常
-                    coinCount++;
-                    if (coinCount > 20) { // 连续快速点击20次
-                        cheatDetected();
-                        return;
-                    }
-                } else {
-                    coinCount = 0;
-                }
-                
-                // 每次塞10日元
-                moneyEarned += 10;
-                moneyEarnedDisplay.textContent = moneyEarned;
-                
-                // 创建浮动效果
-                const effect = document.createElement('div');
-                effect.classList.add('coin-effect');
-                effect.textContent = '+10';
-                effect.style.left = `${event.offsetX - 15}px`;
-                effect.style.top = `${event.offsetY}px`;
-                
-                gameTarget.appendChild(effect);
-                
-                // 移除效果元素
-                setTimeout(() => {
-                    effect.remove();
-                }, 1000);
-            }
-            
-            function cheatDetected() {
-                gameActive = false;
-                clearInterval(gameTimer);
-                
-                // 添加警告消息
-                addMessage('ai', '用你自己的手去投香火钱，否则会遭报应的！', true);
-                
-                // 关闭游戏
-                setTimeout(() => {
-                    hideGame();
-                }, 1000);
-            }
-            
+
             function endGame() {
                 gameActive = false;
-                clearInterval(gameTimer);
-                gameTarget.removeEventListener('click', addCoin);
-                
-                // 显示结果
+                clearInterval(timerId);
+                timerId = null;
+                boxWrapper.style.pointerEvents = 'none';
                 gameResults.style.display = 'block';
-                finalAmountDisplay.textContent = `${moneyEarned} 日元`;
+                finalAmountDisplay.textContent = moneyEarned + ' 日元';
                 resultTimeDisplay.textContent = totalTime;
-                
-                // 更新总香火钱
                 totalMoney += moneyEarned;
                 totalMoneyDisplay.textContent = totalMoney;
-                
-                // 添加聊天消息
+                gameCancel.textContent = '关闭';
+
+                if (maxCombo > 1) {
+                    const extra = document.createElement('p');
+                    extra.style.cssText = 'font-size:15px; color:var(--on-surface-variant); margin-top:4px;';
+                    extra.textContent = `🔥 最高连击 ${maxCombo}`;
+                    gameResults.appendChild(extra);
+                }
+
+                // 硬编码感谢（保留，同时AI也会根据总金额自动回应类似话题）
                 setTimeout(() => {
-                    // 根据塞钱金额显示不同消息
-                    if (moneyEarned < 100) {
-                        addMessage('ai', `你认真的吗...? 才${moneyEarned}日元？神社的维护费用都不够！`, true);
-                    } else if (moneyEarned >= 10000) {
-                        addMessage('ai', `感谢您捐赠了${moneyEarned}日元！您真是太大方了！请务必留下来过夜，让我好好招待您！`, true);
-                    } else if (moneyEarned >= 3000) {
-                        addMessage('ai', `感谢您捐赠了${moneyEarned}日元！哇！这么多香火钱！请留下来过夜吧～`, true);
-                    } else if (moneyEarned >= 1000) {
-                        addMessage('ai', `感谢您捐赠了${moneyEarned}日元！太感谢了！让我请您吃顿饭吧～`, true);
-                    } else {
-                        addMessage('ai', `感谢您捐赠了${moneyEarned}日元！神社的运营就靠大家了！`, true);
-                    }
+                    let msg = '';
+                    if (moneyEarned < 100) msg = `你认真的吗…? 才${moneyEarned}日元？神社的维护费用都不够！`;
+                    else if (moneyEarned >= 10000) msg = `感谢您纳奉了${moneyEarned}日元！您真是太大方了！请务必留下来过夜，让我好好招待您！`;
+                    else if (moneyEarned >= 3000) msg = `感谢您纳奉了${moneyEarned}日元！哇！这么多香火钱！请留下来过夜吧～`;
+                    else if (moneyEarned >= 1000) msg = `感谢您纳奉了${moneyEarned}日元！太感谢了！让我请您吃顿饭吧～`;
+                    else msg = `感谢您纳奉了${moneyEarned}日元！神社的运营就靠大家了！`;
+                    addMessage('ai', msg, true);
                 }, 500);
             }
-            
+
             function cancelGame() {
                 if (!gameActive) return;
-                
-                clearInterval(gameTimer);
-                gameTarget.removeEventListener('click', addCoin);
+                clearInterval(timerId);
+                timerId = null;
                 gameActive = false;
-                
-                // 更新总香火钱
                 totalMoney += moneyEarned;
                 totalMoneyDisplay.textContent = totalMoney;
-                
-                // 显示结果
                 gameResults.style.display = 'block';
-                finalAmountDisplay.textContent = `${moneyEarned} 日元`;
+                finalAmountDisplay.textContent = moneyEarned + ' 日元';
                 resultTimeDisplay.textContent = totalTime - timeLeft;
-                
-                // 添加聊天消息
+                gameCancel.textContent = '关闭';
+                boxWrapper.style.pointerEvents = 'none';
                 setTimeout(() => {
                     if (moneyEarned > 0) {
-                        addMessage('ai', `感谢您捐赠了${moneyEarned}日元！下次请塞更多哦～`, true);
+                        addMessage('ai', `感谢您纳奉了${moneyEarned}日元！下次请纳奉更多哦～`, true);
                     } else {
-                        addMessage('ai', '你还没塞钱就结束了...?', true);
+                        addMessage('ai', '你还没纳奉就结束了…?', true);
                     }
-                }, 500);
-                
-                cancelGameBtn.textContent = "关闭";
+                }, 400);
             }
-            
-            // 事件监听
-            sendButton.addEventListener('click', sendMessage);
-            
-            messageInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
+
+            function handleBoxClick(e) {
+                if (!gameActive) return;
+                const now = Date.now();
+                const diff = now - lastClickTime;
+                lastClickTime = now;
+
+                if (diff < 300) {
+                    comboCount++;
+                    if (comboCount > maxCombo) maxCombo = comboCount;
+                } else {
+                    comboCount = 1;
+                }
+                comboDisplay.textContent = `🔥 连击 ${comboCount}`;
+                comboDisplay.classList.remove('pop');
+                void comboDisplay.offsetWidth;
+                comboDisplay.classList.add('pop');
+
+                moneyEarned += 10;
+                moneyEarnedDisplay.textContent = moneyEarned;
+
+                boxWrapper.classList.remove('shake');
+                void boxWrapper.offsetWidth;
+                boxWrapper.classList.add('shake');
+
+                const rect = boxWrapper.getBoundingClientRect();
+                const cx = e.clientX - rect.left;
+                const cy = e.clientY - rect.top;
+                for (let i = 0; i < 3; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'coin-particle';
+                    p.textContent = '🪙';
+                    const angle = Math.random() * 2 * Math.PI;
+                    const dist = 50 + Math.random() * 70;
+                    const tx = Math.cos(angle) * dist;
+                    const ty = Math.sin(angle) * dist - 30;
+                    p.style.setProperty('--tx', tx + 'px');
+                    p.style.setProperty('--ty', ty + 'px');
+                    p.style.left = cx + 'px';
+                    p.style.top = cy + 'px';
+                    p.style.fontSize = (18 + Math.random() * 14) + 'px';
+                    boxWrapper.appendChild(p);
+                    setTimeout(() => p.remove(), 950);
+                }
+            }
+
+            // ===== 事件绑定 =====
+            sendBtn.addEventListener('click', handleSend);
+            msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
+            msgInput.addEventListener('focus', () => setTimeout(() => chatMessages.scrollTop = chatMessages.scrollHeight, 200));
+
+            // 纳奉按钮
+            playGameBtn.addEventListener('click', () => {
+                gameOverlay.classList.add('active');
+                resetGame();
+            });
+
+            // 游戏弹窗
+            gameClose.addEventListener('click', () => {
+                gameOverlay.classList.remove('active');
+                resetGame();
+            });
+            gameOverlay.addEventListener('click', (e) => {
+                if (e.target === gameOverlay) {
+                    gameOverlay.classList.remove('active');
+                    resetGame();
                 }
             });
-            
-            // 输入框获得焦点时自动滚动到底部
-            messageInput.addEventListener('focus', function() {
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 300);
-            });
-            
-            // 快速建议点击事件
-            suggestions.forEach(suggestion => {
-                suggestion.addEventListener('click', function() {
-                    if (this.id === 'play-game-btn') {
-                        showGame();
-                    } else {
-                        messageInput.value = this.getAttribute('data-text');
-                        messageInput.focus();
-                    }
-                });
-            });
-            
-            // 时间选择器事件
-            timeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // 移除所有选中状态
-                    timeOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // 添加选中状态
+
+            // 时间选项
+            timeOptions.forEach(opt => {
+                opt.addEventListener('click', function() {
+                    timeOptions.forEach(o => o.classList.remove('selected'));
                     this.classList.add('selected');
-                    
-                    // 更新游戏时间
                     totalTime = parseInt(this.dataset.time);
                     timeLeft = totalTime;
                     timeLeftDisplay.textContent = timeLeft;
+                    progressFill.style.width = '100%';
+                    resetGame();
                 });
             });
-            
-            // 游戏事件监听
-            playGameBtn.addEventListener('click', showGame);
-            closeGameBtn.addEventListener('click', hideGame);
-            startGameBtn.addEventListener('click', startGame);
-            cancelGameBtn.addEventListener('click', function() {
-                if (gameActive) {
-                    cancelGame();
-                } else {
-                    hideGame();
+
+            gameStart.addEventListener('click', startGame);
+            gameCancel.addEventListener('click', function() {
+                if (gameActive) cancelGame();
+                else {
+                    gameOverlay.classList.remove('active');
+                    resetGame();
                 }
             });
-            
-            // 添加欢迎消息
+
+            boxWrapper.addEventListener('click', handleBoxClick);
+
+            // ===== 樱花生成 =====
+            const sakuraContainer = document.createElement('div');
+            sakuraContainer.style.cssText = 'position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden;';
+            document.body.prepend(sakuraContainer);
+
+            function spawnSakura() {
+                const el = document.createElement('div');
+                el.className = 'sakura';
+                const size = 14 + Math.random() * 16;
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (12 + Math.random() * 14) + 's';
+                el.style.animationDelay = (Math.random() * 6) + 's';
+                sakuraContainer.appendChild(el);
+                setTimeout(() => el.remove(), 26000);
+            }
+            for (let i = 0; i < 8; i++) setTimeout(spawnSakura, i * 300);
+            setInterval(spawnSakura, 800);
+
+            // ===== 欢迎消息 =====
             setTimeout(() => {
                 addMessage('ai', '欢迎来到博丽神社！我是巫女灵梦～', true);
-                addMessage('ai', '神社的运营离不开大家的香火钱，试试塞钱游戏吧！', true);
-            }, 1500);
-        });
+                addMessage('ai', '神社的运营离不开大家的香火钱，试试纳奉游戏吧！', true);
+            }, 1200);
+        })();
     </script>
 </body>
 </html>
